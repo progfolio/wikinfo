@@ -37,30 +37,41 @@
 ;;@TEMP: remove hard dependency on helm
 (declare-function helm "helm")
 
-;;@TODO: should be defcustoms
-(defvar wikinfo-api-endpoint "https://en.wikipedia.org/w/api.php?")
+;;; Custom Options
+(defgroup wikinfo nil
+  "Wikipedia infobox to Elisp bridge"
+  :group 'development
+  :prefix "wikinfo-")
 
-(defvar wikinfo-search-params '("&action=query"
-                               "&generator=search"
-                               "&gsrsearch=hastemplate:infobox+"
-                               "%s"
-                               "&gsrlimit=20"
-                               "&gsrinfo=suggestion"
-                               "&gsrnamespace=0"
-                               "&gsrwhat=text"
-                               "&prop=extracts"
-                               "&exintro"
-                               "&explaintext"
-                               "&exlimit=max"
-                               "&exsentences=3"
-                               "&format=json"))
+(defcustom wikinfo-api-endpoint "https://en.wikipedia.org/w/api.php?"
+  "API endpoint for queries and searches."
+  :type 'string)
 
-(defvar wikinfo-parse-params '("&action=parse" "&pageid="
-                              "%s"
-                              "&prop=text"
-                              "&section=0"
-                              "&format=json"))
+(defcustom wikinfo-search-params '("&action=query"
+                                   "&generator=search"
+                                   "&gsrsearch=hastemplate:infobox+"
+                                   "%s"
+                                   "&gsrlimit=20"
+                                   "&gsrinfo=suggestion"
+                                   "&gsrnamespace=0"
+                                   "&gsrwhat=text"
+                                   "&prop=extracts"
+                                   "&exintro"
+                                   "&explaintext"
+                                   "&exlimit=max"
+                                   "&exsentences=3"
+                                   "&format=json")
+  "Search query parameters."
+  :type 'string)
 
+(defcustom wikinfo-parse-params '("&action=parse"
+                                  "&pageid="
+                                  "%s"
+                                  "&prop=text"
+                                  "&section=0"
+                                  "&format=json")
+  "Page parsing query parameters."
+  :type 'string)
 
 (defun wikinfo-plist-path (plist &rest path)
   "Recusrively retrive PATH from PLIST."
