@@ -88,9 +88,11 @@
 
 ;;@TODO: don't require helm.
 ;;@TODO: option to include extract in wikinfo plist results?
-(defun wikinfo-search (&optional query)
+;;@UNFINISHED: auto implementation
+(defun wikinfo-search (&optional query auto)
   "Search wikipedia for QUERY.
-Return page ID as string."
+Return page ID as string.
+If AUTO is non-nil, return first search result."
   (interactive)
   (if-let* ((query (or query (read-string "query: ")))
             (url (concat wikinfo-api-endpoint
@@ -190,8 +192,9 @@ Return page ID as string."
 ;; there should be a way to do this programmatically
 ;; e.g. google's im-feelin-lucky, but allow user to define what "luck" is
 ;; by accepting a sorting predicate before taking car of results
-(defun wikinfo (&optional search)
-  "Return infobox plist for SEARCH."
+(defun wikinfo (&optional arg search)
+  "Return infobox plist for SEARCH.
+If ARG is non-nil, use first result (a la google's \"I'm feelin' lucky\")."
   (wikinfo-infobox (wikinfo-search search)))
 
 (provide 'wikinfo)
