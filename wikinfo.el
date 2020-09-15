@@ -73,6 +73,9 @@
   "Page parsing query parameters."
   :type 'string)
 
+(defface wikinfo-search-title '((t (:weight bold :height 1.05)))
+  "Face for search result extracts.")
+
 (defun wikinfo--plist-path (plist &rest path)
   "Recusrively retrive PATH from PLIST."
   (unless (listp plist)
@@ -117,8 +120,7 @@ If AUTO is non-nil, return first search result."
                                   (title   (plist-get page :title))
                                   (index   (plist-get page :index)))
                          `(:candidate
-                           ;;@TODO: make custom face
-                           ,(concat (propertize title 'face '(:weight bold :height 1.05))
+                           ,(concat (propertize title 'face 'wikinfo-search-title)
                                     "\n" extract)
                            :id ,id
                            :title ,title
