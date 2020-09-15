@@ -34,9 +34,6 @@
 (require 'json)
 (require 'dom)
 
-;;@TEMP: remove hard dependency on helm
-(declare-function helm "helm")
-
 ;;; Custom Options
 (defgroup wikinfo nil
   "Wikipedia infobox to Elisp bridge"
@@ -100,12 +97,10 @@
            (json-array-type 'list))
       (json-read-from-string (buffer-string)))))
 
-;;@TODO: don't require helm.
-;;@TODO: option to include extract in wikinfo plist results?
 ;;@UNFINISHED: auto implementation
 (defun wikinfo-search (&optional query _auto)
   "Search wikipedia for QUERY.
-Return page ID as string.
+Return plist with page metadata.
 If AUTO is non-nil, return first search result."
   (interactive)
   (if-let* ((query (or query (read-string "query: ")))
@@ -119,28 +114,25 @@ If AUTO is non-nil, return first search result."
                                   (id      (plist-get page :pageid))
                                   (title   (plist-get page :title))
                                   (index   (plist-get page :index)))
-                         `(:candidate
-                           ,(concat (propertize title 'face 'wikinfo-search-title)
-                                    "\n" extract)
-                           :id ,id
-                           :title ,title
-                           :index ,index)))
+                         (cons (concat (propertize title
+                                                   'face 'wikinfo-search-title)
+                                       "\n" extract "\n")
+                               `( :extract ,extract
+                                  :index   ,index
+                                  :title   ,title
+                                  :title   ,title
+                                  :id      ,id))))
                      pages))
-            (candidates (sort (delq nil candidates)
-                              (lambda (a b)
-                                (< (plist-get a :index) (plist-get b :index)))))
-            (source (eval (macroexpand
-                           `(helm-build-sync-source ,(format "Wikinfo: %s" query)
-                              :candidates ',(mapcar (lambda (candidate)
-                                                      (cons
-                                                       (plist-get candidate :candidate)
-                                                       (plist-get candidate :id)))
-                                                    candidates)
-                              :multiline t))))
-            (id (helm :sources source)))
-      id
+            (sorted (sort (delq nil candidates)
+                          (lambda (a b)
+                            (< (plist-get (cdr a) :index)
+                               (plist-get (cdr b) :index)))))
+            (choice (completing-read "wikinfo: "
+                                     (mapcar #'car sorted)
+                                     nil 'require-match)))
+      (alist-get choice sorted nil nil #'string=)
     ;;@TODO: Fix this. Needs to be more robust.
-    (user-error "Query \"%s\" returned ID of \%d" query id)))
+    (user-error "Query \"%s\" failed" query)))
 
 ;;@TODO:
 (defun wikinfo--sanitize-string (string)
@@ -208,7 +200,9 @@ If AUTO is non-nil, return first search result."
 (defun wikinfo (&optional _arg search)
   "Return infobox plist for SEARCH.
 If ARG is non-nil, use first result (a la google's \"I'm feelin' lucky\")."
-  (wikinfo-infobox (wikinfo-search search)))
+  (let ((query (wikinfo-search search)))
+    (plist-put (wikinfo-infobox (plist-get query :id))
+                                :wikinfo-extract (plist-get query :extract))))
 
 (provide 'wikinfo)
 
