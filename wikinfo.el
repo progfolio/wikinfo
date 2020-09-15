@@ -73,7 +73,7 @@
   "Page parsing query parameters."
   :type 'string)
 
-(defun wikinfo-plist-path (plist &rest path)
+(defun wikinfo--plist-path (plist &rest path)
   "Recusrively retrive PATH from PLIST."
   (unless (listp plist)
     (user-error "Plist is not a list"))
@@ -81,11 +81,11 @@
     (setq plist (plist-get plist (pop path))))
   plist)
 
-(defun wikinfo-url-params (param-list query)
+(defun wikinfo--url-params (param-list query)
   "Replace query symbol in PARAM-LIST with QUERY string."
   (format (string-join param-list) query))
 
-(defun wikinfo-get-json (url)
+(defun wikinfo--json (url)
   "Get JSON from URL. Return a JSON object."
   (message "API URL: %s" url)
   (with-current-buffer (url-retrieve-synchronously url)
@@ -100,16 +100,16 @@
 ;;@TODO: don't require helm.
 ;;@TODO: option to include extract in wikinfo plist results?
 ;;@UNFINISHED: auto implementation
-(defun wikinfo-search (&optional query auto)
+(defun wikinfo-search (&optional query _auto)
   "Search wikipedia for QUERY.
 Return page ID as string.
 If AUTO is non-nil, return first search result."
   (interactive)
   (if-let* ((query (or query (read-string "query: ")))
             (url (concat wikinfo-api-endpoint
-                         (wikinfo-url-params wikinfo-search-params query)))
-            (JSON (wikinfo-get-json url))
-            (pages (cdr (wikinfo-plist-path JSON :query :pages)))
+                         (wikinfo--url-params wikinfo-search-params query)))
+            (JSON (wikinfo--json url))
+            (pages (cdr (wikinfo--plist-path JSON :query :pages)))
             (candidates
              (mapcar (lambda (page)
                        (when-let ((extract (plist-get page :extract))
@@ -157,9 +157,9 @@ If AUTO is non-nil, return first search result."
 (defun wikinfo-infobox (page-id)
   "Return wikipedia infobox as plist for page with PAGE-ID."
   (let* ((url (concat wikinfo-api-endpoint
-                      (wikinfo-url-params wikinfo-parse-params page-id)))
-         (JSON (wikinfo-get-json url))
-         (wikitext-html (wikinfo-plist-path JSON :parse :text :*))
+                      (wikinfo--url-params wikinfo-parse-params page-id)))
+         (JSON (wikinfo--json url))
+         (wikitext-html (wikinfo--plist-path JSON :parse :text :*))
          (html (with-temp-buffer
                  (insert wikitext-html)
                  (libxml-parse-html-region (point-min) (point-max))))
@@ -203,7 +203,7 @@ If AUTO is non-nil, return first search result."
 ;; there should be a way to do this programmatically
 ;; e.g. google's im-feelin-lucky, but allow user to define what "luck" is
 ;; by accepting a sorting predicate before taking car of results
-(defun wikinfo (&optional arg search)
+(defun wikinfo (&optional _arg search)
   "Return infobox plist for SEARCH.
 If ARG is non-nil, use first result (a la google's \"I'm feelin' lucky\")."
   (wikinfo-infobox (wikinfo-search search)))
