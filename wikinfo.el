@@ -44,6 +44,7 @@
   "API endpoint for queries and searches."
   :type 'string)
 
+;;@TODO: grab page urls in this query?
 (defcustom wikinfo-search-params '("&action=query"
                                    "&generator=search"
                                    "&gsrsearch=hastemplate:infobox+"
@@ -98,10 +99,10 @@
       (json-read-from-string (buffer-string)))))
 
 ;;@UNFINISHED: auto implementation
-(defun wikinfo-search (&optional query _auto)
-  "Search wikipedia for QUERY.
-Return plist with page metadata.
-If AUTO is non-nil, return first search result."
+(defun wikinfo-search (&optional query predicate)
+  "Search wikipedia for QUERY. Return plist with page metadata.
+PREDICATE must be a unary function which accepts the QUERY result list.
+It must return a single result. If nil, the user is prompted."
   (interactive)
   (if-let* ((query (or query (read-string "query: ")))
             (url (concat wikinfo-api-endpoint
@@ -120,17 +121,18 @@ If AUTO is non-nil, return first search result."
                                `( :extract ,extract
                                   :index   ,index
                                   :title   ,title
-                                  :title   ,title
                                   :id      ,id))))
                      pages))
             (sorted (sort (delq nil candidates)
                           (lambda (a b)
                             (< (plist-get (cdr a) :index)
-                               (plist-get (cdr b) :index)))))
-            (choice (completing-read "wikinfo: "
-                                     (mapcar #'car sorted)
-                                     nil 'require-match)))
-      (alist-get choice sorted nil nil #'string=)
+                               (plist-get (cdr b) :index))))))
+      (if predicate
+          (funcall predicate (mapcar #'cdr sorted))
+        (alist-get (completing-read "wikinfo: "
+                                    (mapcar #'car sorted)
+                                    nil 'require-match)
+                   sorted nil nil #'string=))
     ;;@TODO: Fix this. Needs to be more robust.
     (user-error "Query \"%s\" failed" query)))
 
@@ -193,16 +195,12 @@ If AUTO is non-nil, return first search result."
                                               (string-match-p "\\(?:\\[[[:digit:]]*]\\)" el))))))))))
     (plist-put result :wikinfo-entity (list (string-trim entity)))))
 
-;;@TODO: need to think about interface...
-;; there should be a way to do this programmatically
-;; e.g. google's im-feelin-lucky, but allow user to define what "luck" is
-;; by accepting a sorting predicate before taking car of results
-(defun wikinfo (&optional _arg search)
+(defun wikinfo (&optional search predicate)
   "Return infobox plist for SEARCH.
-If ARG is non-nil, use first result (a la google's \"I'm feelin' lucky\")."
-  (let ((query (wikinfo-search search)))
+PREDICATE and SEARCH are passed to `wikinfo-search'."
+  (let ((query (wikinfo-search search predicate)))
     (plist-put (wikinfo-infobox (plist-get query :id))
-                                :wikinfo-extract (plist-get query :extract))))
+               :wikinfo-extract (plist-get query :extract))))
 
 (provide 'wikinfo)
 
