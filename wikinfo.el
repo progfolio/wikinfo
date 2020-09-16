@@ -159,15 +159,14 @@ It must return a single result. If nil, the user is prompted."
          ;;@ERROR if not found
          (table (dom-by-class html "infobox.*"))
          (rows (dom-by-tag table 'tr))
-         (entity (dom-texts (car rows)))
+         (entity (let ((text (dom-texts (car rows))))
+                   (if (string-empty-p text) nil text)))
          result)
     (dolist (row rows result)
       (when-let* ((header (dom-by-tag row 'th))
                   (data (car (mapcar #'dom-strings
                                      ;;@TODO: decompose into function
                                      ;;remove unwanted elements
-
-
                                      (mapcar (lambda (td)
                                                (seq-filter (lambda (el) (not (member (car-safe el) '(style))))
                                                            td))
@@ -179,18 +178,20 @@ It must return a single result. If nil, the user is prompted."
                                   (replace-regexp-in-string "--" "-")
                                   (replace-regexp-in-string "-$" "")
                                   (replace-regexp-in-string "^-" ""))))
-        (setq result (plist-put result
-                                (intern (concat ":" header-texts))
-                                (thread-last
-                                    data
-                                  (mapcar #'string-trim)
-                                  (mapcar (lambda (el)
-                                            (replace-regexp-in-string " " " " el)))
-                                  (seq-filter
-                                   (lambda (el)
-                                     (not (or (string-match-p "^[^[:alnum:]]*$" el)
-                                              (string-match-p "\\(?:\\[[[:digit:]]*]\\)" el))))))))))
-    (plist-put result :wikinfo-entity (list (string-trim entity)))))
+        (setq result
+              (plist-put result
+                         (intern (concat ":" header-texts))
+                         (thread-last
+                             data
+                           (mapcar #'string-trim)
+                           (mapcar (lambda (el)
+                                     (replace-regexp-in-string " " " " el)))
+                           (seq-filter
+                            (lambda (el)
+                              (not (or (string-match-p "^[^[:alnum:]]*$" el)
+                                       (string-match-p "\\(?:\\[[[:digit:]]*]\\)" el))))))))))
+    (when entity (plist-put result :wikinfo-entity (string-trim entity)))
+    result))
 
 (defun wikinfo (&optional search predicate)
   "Return infobox plist for SEARCH.
