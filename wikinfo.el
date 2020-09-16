@@ -29,6 +29,7 @@
 ;;
 
 ;;; Code:
+(eval-when-compile (require 'subr-x))
 (require 'url)
 (require 'dom)
 
