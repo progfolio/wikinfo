@@ -39,7 +39,11 @@
   :group 'development
   :prefix "wikinfo-")
 
-(defcustom wikinfo-api-endpoint "https://en.wikipedia.org/w/api.php?"
+(defcustom wikinfo-base-url "https://en.wikipedia.org"
+  "Base URL used for API URLS."
+  :type 'string)
+
+(defcustom wikinfo-api-endpoint "/w/api.php?"
   "API endpoint for queries and searches."
   :type 'string)
 
@@ -85,6 +89,10 @@
   "Replace query symbol in PARAM-LIST with QUERY string."
   (format (string-join param-list) query))
 
+(defun wikinfo--url ()
+  "RETURN base URL for QUERY."
+  (concat wikinfo-base-url wikinfo-api-endpoint))
+
 (defun wikinfo--json (url)
   "Get JSON from URL. Return a JSON object."
   (message "API URL: %s" url)
@@ -103,7 +111,7 @@ PREDICATE must be a unary function which accepts the QUERY result list.
 It must return a single result. If nil, the user is prompted."
   (interactive)
   (if-let* ((query (or query (read-string "query: ")))
-            (url (concat wikinfo-api-endpoint
+            (url (concat (wikinfo--url)
                          (wikinfo--url-params wikinfo-search-params query)))
             (JSON (wikinfo--json url))
             (pages (cdr (wikinfo--plist-path JSON :query :pages)))
@@ -150,7 +158,7 @@ It must return a single result. If nil, the user is prompted."
 
 (defun wikinfo-infobox (page-id)
   "Return wikipedia infobox as plist for page with PAGE-ID."
-  (let* ((url (concat wikinfo-api-endpoint
+  (let* ((url (concat (wikinfo--url)
                       (wikinfo--url-params wikinfo-parse-params page-id)))
          (JSON (wikinfo--json url))
          (wikitext-html (wikinfo--plist-path JSON :parse :text :*))
