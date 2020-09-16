@@ -138,7 +138,7 @@ It must return a single result. If nil, the user is prompted."
                                     nil 'require-match)
                    sorted nil nil #'string=))
     ;;@TODO: Fix this. Needs to be more robust.
-    (user-error "Query \"%s\" failed" query)))
+    (user-error "Query %S failed" query)))
 
 ;;@TODO:
 (defun wikinfo--sanitize-string (string)
