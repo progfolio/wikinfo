@@ -6,7 +6,7 @@
 ;; URL: https://github.com/progfolio/wikinfo
 ;; Created: September 14, 2020
 ;; Keywords: org, convenience
-;; Package-Requires: ((emacs "26.1"))
+;; Package-Requires: ((emacs "27.1"))
 ;; Version: 0.0.0
 
 ;; This file is not part of GNU Emacs.
@@ -29,9 +29,7 @@
 ;;
 
 ;;; Code:
-
 (require 'url)
-(require 'json)
 (require 'dom)
 
 ;;; Custom Options
@@ -94,9 +92,8 @@
                  (save-match-data
                    (re-search-forward "^\n" nil t)
                    (point)))
-    (let* ((json-object-type 'plist)
-           (json-array-type 'list))
-      (json-read-from-string (buffer-string)))))
+      (json-parse-string (buffer-string)
+                         :object-type 'plist)))
 
 ;;@UNFINISHED: auto implementation
 (defun wikinfo-search (&optional query predicate)
