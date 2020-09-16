@@ -114,7 +114,7 @@ It must return a single result. If nil, the user is prompted."
                                   (index   (plist-get page :index)))
                          (cons (concat (propertize title
                                                    'face 'wikinfo-search-title)
-                                       "\n" extract "\n")
+                                       "\n" extract)
                                `( :extract ,extract
                                   :index   ,index
                                   :title   ,title
