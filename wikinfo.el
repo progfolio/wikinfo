@@ -104,12 +104,10 @@
     (json-parse-string (buffer-string)
                        :object-type 'plist)))
 
-;;@UNFINISHED: auto implementation
 (defun wikinfo-search (&optional query predicate)
   "Search wikipedia for QUERY. Return plist with page metadata.
 PREDICATE must be a unary function which accepts the QUERY result list.
 It must return a single result. If nil, the user is prompted."
-  (interactive)
   (if-let* ((query (or query (read-string "query: ")))
             (url (concat (wikinfo--url)
                          (wikinfo--url-params wikinfo-search-params query)))
