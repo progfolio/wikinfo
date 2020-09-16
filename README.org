@@ -1,1 +1,49 @@
 * Wikinfo
+Wikinfo is a library for scraping Wikipedia [[https://en.wikipedia.org/wiki/Help:Infobox][infoboxes]].
+
+** Functions
+- wikinfo (&optional search predicate) ::
+  Return infobox plist for /SEARCH/.
+  /PREDICATE/ is an optional unary function which takes a list of search results as its argument.
+  It must return a single result to use.
+  If either argument is nil, the user is interactively prompted.
+
+  For example:
+
+#+begin_src emacs-lisp
+(wikinfo "Emacs" #'car)
+#+end_src
+
+Will search the Wikipedia API for pages with infoboxes that contain the term "Emacs".
+The predicate will return the first result, similar to Google's "I'm feeling lucky" search feature.
+The result is a plist (note: Formatting applied to extract to reduce page width):
+
+#+begin_src emacs-lisp
+( :original-authors ("David A. Moon" "Guy L. Steele Jr.")
+  :developers ("Various" "free/libre software" "developers, including volunteers and" "commercial" "developers")
+  :initial-release ("1976" "; 44 years ago" "1976")
+  :stable-release ("27.1 (August 10, 2020" "; 37 days ago" "2020-08-10")
+  :written-in ("Lisp" "C")
+  :operating-system ("Cross-platform")
+  :type ("Text editor")
+  :wikinfo ( :extract "Emacs or EMACS (Editor MACroS) is a family of text
+  editors that are characterized by their extensibility. The manual for the most
+  widely used variant, GNU Emacs, describes it as \"the extensible,
+  customizable, self-documenting, real-time display editor\". Development of the
+  first Emacs began in the mid-1970s, and work on its direct descendant, GNU
+  Emacs, continues actively as of 2020."
+             :index 1
+             :title "Emacs"
+             :id 18933234))
+#+end_src
+** Notice: EXPERIMENTAL
+This library is still under design development.
+There are no guarantees for API/feature stability at this point.
+
+** Installation
+
+Try it with the [[https://github.com/raxod502/straight.el][straight package manager]]:
+
+#+begin_src emacs-lisp
+(straight-use-package '(wikinfo :type git :host github :repo "progfolio/wikinfo"))
+#+end_src
