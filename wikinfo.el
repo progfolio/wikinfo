@@ -159,8 +159,6 @@ It must return a single result. If nil, the user is prompted."
          ;;@ERROR if not found
          (table (dom-by-class html "infobox.*"))
          (rows (dom-by-tag table 'tr))
-         (entity (let ((text (dom-texts (car rows))))
-                   (if (string-empty-p text) nil text)))
          result)
     (dolist (row rows result)
       (when-let* ((header (dom-by-tag row 'th))
@@ -190,15 +188,14 @@ It must return a single result. If nil, the user is prompted."
                             (lambda (el)
                               (not (or (string-match-p "^[^[:alnum:]]*$" el)
                                        (string-match-p "\\(?:\\[[[:digit:]]*]\\)" el))))))))))
-    (when entity (plist-put result :wikinfo-entity (string-trim entity)))
     result))
 
 (defun wikinfo (&optional search predicate)
   "Return infobox plist for SEARCH.
 PREDICATE and SEARCH are passed to `wikinfo-search'."
-  (let ((query (wikinfo-search search predicate)))
-    (plist-put (wikinfo-infobox (plist-get query :id))
-               :wikinfo-extract (plist-get query :extract))))
+  (let* ((query (wikinfo-search search predicate))
+         (infobox (wikinfo-infobox (plist-get query :id))))
+    (plist-put infobox :wikinfo query)))
 
 (provide 'wikinfo)
 
