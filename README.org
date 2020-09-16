@@ -14,7 +14,7 @@ Wikinfo is an elisp library for scraping Wikipedia [[https://en.wikipedia.org/wi
 (wikinfo "Emacs" #'car)
 #+end_src
 
-Will search the Wikipedia API for pages with infoboxes that contain the term "Emacs".
+searches the Wikipedia API for pages with infoboxes that contain the term "Emacs".
 The predicate will return the first result, similar to Google's "I'm feeling lucky" search feature.
 The result is a plist (note: Formatting applied to extract to reduce page width):
 
