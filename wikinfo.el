@@ -29,9 +29,9 @@
 ;;
 
 ;;; Code:
-(eval-when-compile (require 'subr-x))
 (require 'url)
 (require 'dom)
+(eval-when-compile (require 'subr-x))
 
 ;;; Custom Options
 (defgroup wikinfo nil
