@@ -92,8 +92,8 @@
                  (save-match-data
                    (re-search-forward "^\n" nil t)
                    (point)))
-      (json-parse-string (buffer-string)
-                         :object-type 'plist)))
+    (json-parse-string (buffer-string)
+                       :object-type 'plist)))
 
 ;;@UNFINISHED: auto implementation
 (defun wikinfo-search (&optional query predicate)
