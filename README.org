@@ -1,5 +1,5 @@
 * Wikinfo
-Wikinfo is a library for scraping Wikipedia [[https://en.wikipedia.org/wiki/Help:Infobox][infoboxes]].
+Wikinfo is an elisp library for scraping Wikipedia [[https://en.wikipedia.org/wiki/Help:Infobox][infoboxes]].
 
 ** Functions
 - wikinfo (&optional search predicate) ::
