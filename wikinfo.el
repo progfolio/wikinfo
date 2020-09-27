@@ -139,19 +139,44 @@ It must return a single result. If nil, the user is prompted."
     ;;@TODO: Fix this. Needs to be more robust.
     (user-error "Query %S failed" query)))
 
-;;@TODO:
-(defun wikinfo--sanitize-string (string)
-  "Remove unwanted characters, trim STRING."
-  string)
-(defun wikinfo--string-to-keyword (string)
-  "Return keyword from STRING."
-  string)
+(defun wikinfo--santize-header-text (string)
+  "Return santizied th STRING."
+  (thread-last
+      (downcase string)
+    (replace-regexp-in-string "\\(?:[[:space:]]\\)" "-")
+    (replace-regexp-in-string "[^[:alnum:]-]" "")
+    (replace-regexp-in-string "--" "-")
+    (replace-regexp-in-string "-$" "")
+    (replace-regexp-in-string "^-" "")))
 
-;;@TODO: extract from wikinfo-infobox
-(defun wikinfo--clean-key (string)
-  "Return a keyword from STRING."
-  (intern
-   (concat ":" (replace-regexp-in-string "\\((\\|)\\)" "" string))))
+(defun wikinfo--sanitize-data (string)
+  "Return sanitized STRING."
+  (thread-last
+      string
+    ;;embedded newline characters
+    (replace-regexp-in-string "\\(?: \n\\)" ",")
+    (replace-regexp-in-string "\\(?:\n\\)" "")
+    ;;non breaking spaces
+    (replace-regexp-in-string " " " ")
+    ;;double spaces
+    (replace-regexp-in-string "[[:space:]]\\{2,\\}" " ")
+    ;;extra space around open paren type delimiters
+    (replace-regexp-in-string "\\(?:\\([(<[{]\\) \\)" "\\1")
+    ;;extra space around closing paren type delimiters
+    (replace-regexp-in-string "\\(?: \\([])>}]\\)\\)" "\\1")
+    (replace-regexp-in-string "\\(?:\\([[:digit:]]+\\)[[:space:]]*\\(:\\)[[:space:]]*\\([[:digit:]]+\\)\\)"
+                              "\\1\\2\\3")
+    ;;space before ", ; : ."
+    (replace-regexp-in-string "\\(?: \\([,:;.]\\)\\)" "\\1")
+    ;;multiple commas
+    (replace-regexp-in-string ",\\{2,\\}" ",")
+    ;;space before ", ; : ."
+    (replace-regexp-in-string "\\(?: \\([,:;.]\\)\\)" "\\1")
+    ;;extra space around "/"
+    (replace-regexp-in-string "\\(?:[[:space:]]+\\(/[[:alpha:]]*\\)[[:space:]]*\\)" "\\1")
+    ;;plus/minus and footnote text
+    (replace-regexp-in-string "\\(?:\\[\\(?:[[:digit:]]\\|±\\)*]\\)" "")
+    (string-trim)))
 
 (defun wikinfo-infobox (page-id)
   "Return wikipedia infobox as plist for page with PAGE-ID."
@@ -168,32 +193,14 @@ It must return a single result. If nil, the user is prompted."
          result)
     (dolist (row rows result)
       (when-let* ((header (dom-by-tag row 'th))
-                  (data (car (mapcar #'dom-strings
-                                     ;;@TODO: decompose into function
-                                     ;;remove unwanted elements
-                                     (mapcar (lambda (td)
-                                               (seq-filter (lambda (el) (not (member (car-safe el) '(style))))
-                                                           td))
-                                             (dom-by-tag row 'td)))))
-                  (header-texts (thread-last
-                                    (downcase (dom-texts header))
-                                  (replace-regexp-in-string "\\(?:[[:space:]]\\)" "-")
-                                  (replace-regexp-in-string "[^[:alnum:]-]" "")
-                                  (replace-regexp-in-string "--" "-")
-                                  (replace-regexp-in-string "-$" "")
-                                  (replace-regexp-in-string "^-" ""))))
-        (setq result
-              (plist-put result
-                         (intern (concat ":" header-texts))
-                         (thread-last
-                             data
-                           (mapcar #'string-trim)
-                           (mapcar (lambda (el)
-                                     (replace-regexp-in-string " " " " el)))
-                           (seq-filter
-                            (lambda (el)
-                              (not (or (string-match-p "^[^[:alnum:]]*$" el)
-                                       (string-match-p "\\(?:\\[[[:digit:]]*]\\)" el))))))))))
+                  (header-texts (wikinfo--santize-header-text (dom-texts header)))
+                  (data (dom-texts (dom-by-tag row 'td))))
+        (unless (or (string-empty-p header-texts)
+                    (string-empty-p data))
+          (setq result
+                (plist-put result
+                           (intern (concat ":" header-texts))
+                           (wikinfo--sanitize-data data))))))
     result))
 
 (defun wikinfo (&optional search predicate)
