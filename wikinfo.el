@@ -176,6 +176,8 @@ It must return a single result. If nil, the user is prompted."
     (replace-regexp-in-string "\\(?:[[:space:]]+\\(/[[:alpha:]]*\\)[[:space:]]*\\)" "\\1")
     ;;plus/minus and footnote text
     (replace-regexp-in-string "\\(?:\\[\\(?:[[:digit:]]\\|±\\)*]\\)" "")
+    ;;trailing comma
+    (replace-regexp-in-string "\\(?:,[[:space:]]*$\\)" "")
     (string-trim)))
 
 (defun wikinfo-infobox (page-id)
