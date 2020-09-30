@@ -148,6 +148,8 @@ It must return a single result. If nil, the user is prompted."
   "Return santizied th STRING."
   (thread-last
       (downcase string)
+    ;;@OPTIMIZATION: combine this with following regexp
+    (replace-regexp-in-string " " " ")
     (replace-regexp-in-string "\\(?:[[:space:]]\\)" "-")
     (replace-regexp-in-string "[^[:alnum:]-]" "")
     (replace-regexp-in-string "--" "-")
