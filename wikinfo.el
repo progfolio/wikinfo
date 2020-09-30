@@ -73,9 +73,14 @@
   "Page parsing query parameters."
   :type 'string)
 
+(defcustom wikinfo-ignored-targets '(style br hr "reference" "plainlinks")
+  "List of targets for `wikinfo--remove-targets'."
+  :type 'list)
+
 (defface wikinfo-search-title '((t (:weight bold :height 1.05)))
   "Face for search result extracts.")
 
+;;; Functions
 (defun wikinfo--plist-path (plist &rest path)
   "Recusrively retrive PATH from PLIST."
   (unless (listp plist)
@@ -211,7 +216,7 @@ TARGETS must one of the following:
                  (libxml-parse-html-region (point-min) (point-max))))
          ;;@ERROR if not found
          (table (wikinfo--remove-targets
-                 (dom-by-class html "infobox.*") '(style br hr "reference")))
+                 (dom-by-class html "infobox.*") wikinfo-ignored-targets))
          (rows (dom-by-tag table 'tr))
          result)
     (dolist (row rows result)
