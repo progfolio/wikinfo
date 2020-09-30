@@ -128,6 +128,7 @@ It must return a single result. If nil, the user is prompted."
                                   (id      (plist-get page :pageid))
                                   (title   (plist-get page :title))
                                   (index   (plist-get page :index)))
+                         (setq extract (wikinfo--sanitize-data extract))
                          (cons (concat (propertize title
                                                    'face 'wikinfo-search-title)
                                        "\n" extract)
