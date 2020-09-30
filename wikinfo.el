@@ -73,7 +73,12 @@
   "Page parsing query parameters."
   :type 'string)
 
-(defcustom wikinfo-ignored-targets '(style br hr "reference" "plainlinks")
+(defcustom wikinfo-ignored-targets '(style
+                                     br
+                                     hr
+                                     "reference"
+                                     "plainlinks"
+                                     "NavHead")
   "List of targets for `wikinfo--remove-targets'."
   :type 'list)
 
