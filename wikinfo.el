@@ -174,11 +174,31 @@ It must return a single result. If nil, the user is prompted."
     (replace-regexp-in-string "\\(?: \\([,:;.]\\)\\)" "\\1")
     ;;extra space around "/"
     (replace-regexp-in-string "\\(?:[[:space:]]+\\(/[[:alpha:]]*\\)[[:space:]]*\\)" "\\1")
-    ;;plus/minus and footnote text
-    (replace-regexp-in-string "\\(?:\\[\\(?:[[:digit:]]\\|±\\)*]\\)" "")
     ;;trailing comma
     (replace-regexp-in-string "\\(?:,[[:space:]]*$\\)" "")
     (string-trim)))
+
+;;@TODO: make non-destructive If we use it more than once in the future.
+(defun wikinfo--remove-targets (dom targets)
+  "Remove list of TARGETS from DOM.
+TARGETS must one of the following:
+  - a symbol representing a tag (e.g. `style`)
+  - a regexp matching a class name
+ Returns altered DOM."
+  (let ((nodelist
+         (thread-last
+             targets
+           (mapcar (lambda (target)
+                     (let* ((classp (stringp target))
+                            (nodes
+                             (funcall (if classp #'dom-by-class #'dom-by-tag)
+                                      dom target)))
+                       nodes)))
+           (delq nil)
+           (apply #'append)
+           (delete-dups))))
+    (dolist (tag nodelist dom)
+      (dom-remove-node dom tag))))
 
 (defun wikinfo-infobox (page-id)
   "Return wikipedia infobox as plist for page with PAGE-ID."
@@ -190,7 +210,8 @@ It must return a single result. If nil, the user is prompted."
                  (insert wikitext-html)
                  (libxml-parse-html-region (point-min) (point-max))))
          ;;@ERROR if not found
-         (table (dom-by-class html "infobox.*"))
+         (table (wikinfo--remove-targets
+                 (dom-by-class html "infobox.*") '(style br hr "reference")))
          (rows (dom-by-tag table 'tr))
          result)
     (dolist (row rows result)
