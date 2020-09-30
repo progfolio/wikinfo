@@ -167,20 +167,18 @@ It must return a single result. If nil, the user is prompted."
   (thread-last
       string
     ;;embedded newline characters
-    (replace-regexp-in-string "\\(?: \n\\)" ",")
-    (replace-regexp-in-string "\\(?:\n\\)" "")
+    (replace-regexp-in-string "\\(?:[[:space:]]+\n[[:space:]]+\\)" ",")
+    (replace-regexp-in-string "\\(?:\n\\)" " ")
     ;;non breaking spaces
     (replace-regexp-in-string " " " ")
     ;;double spaces
     (replace-regexp-in-string "[[:space:]]\\{2,\\}" " ")
     ;;extra space around open paren type delimiters
-    (replace-regexp-in-string "\\(?:\\([(<[{]\\) \\)" "\\1")
+    (replace-regexp-in-string "\\(?:\\([(<[{\"]\\) \\)" "\\1")
     ;;extra space around closing paren type delimiters
-    (replace-regexp-in-string "\\(?: \\([])>}]\\)\\)" "\\1")
+    (replace-regexp-in-string "\\(?: \\([])>}\"]\\)\\)" "\\1")
     (replace-regexp-in-string "\\(?:\\([[:digit:]]+\\)[[:space:]]*\\(:\\)[[:space:]]*\\([[:digit:]]+\\)\\)"
                               "\\1\\2\\3")
-    ;;space before ", ; : ."
-    (replace-regexp-in-string "\\(?: \\([,:;.]\\)\\)" "\\1")
     ;;multiple commas
     (replace-regexp-in-string ",\\{2,\\}" ",")
     ;;space before ", ; : ."
@@ -189,6 +187,10 @@ It must return a single result. If nil, the user is prompted."
     (replace-regexp-in-string "\\(?:[[:space:]]+\\(/[[:alpha:]]*\\)[[:space:]]*\\)" "\\1")
     ;;trailing comma
     (replace-regexp-in-string "\\(?:,[[:space:]]*$\\)" "")
+    ;;leading comma
+    (replace-regexp-in-string "\\(?:^[[:space:]]*,[[:space:]]*\\)" "")
+    ;;comma without spaces e.g. x,x
+    (replace-regexp-in-string "\\(?:\\(,\\)\\([^[:space:]]+\\)\\)" "\\1 \\2")
     (string-trim)))
 
 ;;@TODO: make non-destructive If we use it more than once in the future.
