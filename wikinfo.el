@@ -212,10 +212,10 @@ TARGETS must one of the following:
     (dolist (tag nodelist dom)
       (dom-remove-node dom tag))))
 
-(defun wikinfo-infobox (page-id)
-  "Return wikipedia infobox as plist for page with PAGE-ID."
+(defun wikinfo-infobox (id)
+  "Return wikipedia infobox as plist for page with ID."
   (let* ((url (concat (wikinfo--url)
-                      (wikinfo--url-params wikinfo-parse-params page-id)))
+                      (wikinfo--url-params wikinfo-parse-params id)))
          (JSON (wikinfo--json url))
          (wikitext-html (wikinfo--plist-path JSON :parse :text :*))
          (html (with-temp-buffer
