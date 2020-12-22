@@ -222,9 +222,9 @@ TARGETS must one of the following:
          (html (with-temp-buffer
                  (insert wikitext-html)
                  (libxml-parse-html-region (point-min) (point-max))))
-         ;;@ERROR if not found
-         (table (wikinfo--remove-targets
-                 (dom-by-class html "infobox.*") wikinfo-ignored-targets))
+         (table (or (wikinfo--remove-targets
+                     (dom-by-class html "infobox.*") wikinfo-ignored-targets)
+                    (error "Infobox not found")))
          (rows (dom-by-tag table 'tr))
          result)
     (dolist (row rows result)
