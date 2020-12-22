@@ -25,8 +25,7 @@
 ;; along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; wikinfo's aim is to provide a simple elisp interface to Wikipedia's infoboxes.
-;;
+;; Wikinfo scrapes Wikipedia's infoboxes into a plist for use with other programs.
 
 ;;; Code:
 (require 'url)
