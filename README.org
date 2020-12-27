@@ -2,9 +2,9 @@
 Wikinfo is an elisp library for scraping Wikipedia [[https://en.wikipedia.org/wiki/Help:Infobox][infoboxes]].
 
 ** Functions
-- wikinfo (&optional search predicate) ::
+- wikinfo (&optional search filter) ::
   Return infobox plist for /SEARCH/.
-  /PREDICATE/ is an optional unary function which takes a list of search results as its argument.
+  /FILTER/ is an optional unary function which takes a list of search results as its argument.
   It must return a single result to use.
   If either argument is nil, the user is interactively prompted.
 
@@ -15,7 +15,7 @@ Wikinfo is an elisp library for scraping Wikipedia [[https://en.wikipedia.org/wi
   #+end_src
 
   searches the Wikipedia API for pages with infoboxes that contain the term "Emacs".
-  The predicate will return the first result, similar to Google's "I'm feeling lucky" search feature.
+  The filter will return the first result, similar to Google's "I'm feeling lucky" search feature.
   The result is a plist (note: Formatting applied to extract to reduce page width):
 
 #+begin_src emacs-lisp

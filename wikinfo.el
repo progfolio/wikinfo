@@ -112,9 +112,9 @@
     (json-parse-string (buffer-string)
                        :object-type 'plist)))
 
-(defun wikinfo-search (&optional query predicate)
+(defun wikinfo-search (&optional query filter)
   "Search wikipedia for QUERY. Return plist with page metadata.
-PREDICATE must be a unary function which accepts the QUERY result list.
+FILTER must be a unary function which accepts the QUERY result list.
 It must return a single result. If nil, the user is prompted."
   (if-let* ((query (or query (read-string "query: ")))
             (url (concat (wikinfo--url)
@@ -140,8 +140,8 @@ It must return a single result. If nil, the user is prompted."
                           (lambda (a b)
                             (< (plist-get (cdr a) :index)
                                (plist-get (cdr b) :index))))))
-      (if predicate
-          (funcall predicate (mapcar #'cdr sorted))
+      (if filter
+          (funcall filter (mapcar #'cdr sorted))
         (alist-get (completing-read "wikinfo: "
                                     (mapcar #'car sorted)
                                     nil 'require-match)
@@ -190,7 +190,7 @@ It must return a single result. If nil, the user is prompted."
     (replace-regexp-in-string "\\(?:\\(,\\)\\([^[:space:]]+\\)\\)" "\\1 \\2")
     (string-trim)))
 
-;;@TODO: make non-destructive If we use it more than once in the future.
+;;@TODO: make non-destructive if we use it more than once in the future.
 (defun wikinfo--remove-targets (dom targets)
   "Remove list of TARGETS from DOM.
 TARGETS must one of the following:
@@ -238,10 +238,10 @@ TARGETS must one of the following:
                            (wikinfo--sanitize-data data))))))
     result))
 
-(defun wikinfo (&optional search predicate)
+(defun wikinfo (&optional search filter)
   "Return infobox plist for SEARCH.
-PREDICATE and SEARCH are passed to `wikinfo-search'."
-  (let* ((query (wikinfo-search search predicate))
+FILTER and SEARCH are passed to `wikinfo-search'."
+  (let* ((query (wikinfo-search search filter))
          (infobox (wikinfo-infobox (plist-get query :id))))
     (plist-put infobox :wikinfo query)))
 
