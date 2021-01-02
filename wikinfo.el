@@ -116,7 +116,7 @@
   "Search wikipedia for QUERY. Return plist with page metadata.
 FILTER must be a unary function which accepts the QUERY result list.
 It must return a single result. If nil, the user is prompted."
-  (if-let* ((query (or query (read-string "query: ")))
+  (if-let* ((query (or query (read-string "Query: ")))
             (url (concat (wikinfo--url)
                          (wikinfo--url-params wikinfo-search-params query)))
             (JSON (wikinfo--json url))
