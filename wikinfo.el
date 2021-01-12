@@ -142,10 +142,12 @@ It must return a single result. If nil, the user is prompted."
                                (plist-get (cdr b) :index))))))
       (if filter
           (funcall filter (mapcar #'cdr sorted))
-        (alist-get (completing-read "wikinfo: "
-                                    (mapcar #'car sorted)
-                                    nil 'require-match)
-                   sorted nil nil #'string=))
+        (or
+         (alist-get (completing-read "wikinfo: "
+                                     (mapcar #'car sorted)
+                                     nil t)
+                    sorted nil nil #'string=)
+         (user-error "No candidate selected")))
     ;;@TODO: Fix this. Needs to be more robust.
     (user-error "Query %S failed" query)))
 
