@@ -1,6 +1,8 @@
 * Wikinfo
 Wikinfo is an elisp library for scraping Wikipedia [[https://en.wikipedia.org/wiki/Help:Infobox][infoboxes]].
 
+[[https://melpa.org/#/wikinforg][file:https://melpa.org/packages/wikinforg-badge.svg]]
+
 ** Functions
 - wikinfo (&optional search filter) ::
   Return infobox plist for /SEARCH/.
@@ -43,8 +45,20 @@ There are no guarantees for API/feature stability at this point.
 
 ** Installation
 
+*** MELPA
 Try it with the [[https://github.com/raxod502/straight.el][straight package manager]]:
-
 #+begin_src emacs-lisp
-(straight-use-package '(wikinfo :type git :host github :repo "progfolio/wikinfo"))
+(straight-use-package 'wikinfo)
+#+end_src
+
+or [[https://github.com/jwiegley/use-package][use-package]]:
+#+begin_src emacs-lisp
+(use-package wikinfo
+  :ensure t)
+#+end_src
+*** Manual
+Download ~wikinfo~ and make sure it is in your load-path.
+Require it in your init file.
+#+begin_src emacs-lisp
+(require 'wikinfo)
 #+end_src
