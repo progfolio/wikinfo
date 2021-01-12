@@ -1,7 +1,7 @@
 * Wikinfo
 Wikinfo is an elisp library for scraping Wikipedia [[https://en.wikipedia.org/wiki/Help:Infobox][infoboxes]].
 
-[[https://melpa.org/#/wikinforg][file:https://melpa.org/packages/wikinforg-badge.svg]]
+[[https://melpa.org/#/wikinfo][file:https://melpa.org/packages/wikinfo-badge.svg]]
 
 ** Functions
 - wikinfo (&optional search filter) ::
