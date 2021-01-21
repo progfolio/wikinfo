@@ -226,6 +226,7 @@ TARGETS must one of the following:
          (table (or (wikinfo--remove-targets
                      (dom-by-class html "infobox.*") wikinfo-ignored-targets)
                     (error "Infobox not found")))
+         (thumbnail (alist-get 'src (cadar (dom-by-tag html 'img))))
          (rows (dom-by-tag table 'tr))
          result)
     (dolist (row rows result)
@@ -238,6 +239,9 @@ TARGETS must one of the following:
                 (plist-put result
                            (intern (concat ":" header-texts))
                            (wikinfo--sanitize-data data))))))
+    (when-let ((src (alist-get 'src (cadar (dom-by-tag html 'img)))))
+      (setq result plist-put result :thumbnail
+            (concat "https:" thumbnail)))
     result))
 
 (defun wikinfo (&optional search filter)
