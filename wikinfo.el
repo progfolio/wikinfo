@@ -240,8 +240,9 @@ TARGETS must one of the following:
                            (intern (concat ":" header-texts))
                            (wikinfo--sanitize-data data))))))
     (when-let ((src (alist-get 'src (cadar (dom-by-tag html 'img)))))
-      (setq result (plist-put result :thumbnail
-                              (concat "https:" thumbnail))))
+      (when thumbnail
+        (setq result (plist-put result :thumbnail
+                                (concat "https:" thumbnail)))))
     result))
 
 (defun wikinfo (&optional search filter)
