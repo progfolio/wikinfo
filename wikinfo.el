@@ -190,6 +190,8 @@ It must return a single result. If nil, the user is prompted."
     (replace-regexp-in-string "\\(?:^[[:space:]]*,[[:space:]]*\\)" "")
     ;;comma without spaces e.g. x,x
     (replace-regexp-in-string "\\(?:\\(,\\)\\([^[:space:]]+\\)\\)" "\\1 \\2")
+    ;;footnote markup
+    (replace-regexp-in-string "\\(?:\\[[[:digit:]]*]\\)" "")
     (string-trim)))
 
 ;;@TODO: make non-destructive if we use it more than once in the future.
