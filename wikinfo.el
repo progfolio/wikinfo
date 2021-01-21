@@ -173,7 +173,7 @@ It must return a single result. If nil, the user is prompted."
     ;;double spaces
     (replace-regexp-in-string "[[:space:]]\\{2,\\}" " ")
     ;;extra space around open paren type delimiters
-    (replace-regexp-in-string "\\(?:\\([(<[{\"]\\) \\)" "\\1")
+    (replace-regexp-in-string "\\(?:\\([(<[{\]\\) \\)" "\\1")
     ;;extra space around closing paren type delimiters
     (replace-regexp-in-string "\\(?: \\([])>}]\\)\\)" "\\1")
     (replace-regexp-in-string "\\(?:\\([[:digit:]]+\\)[[:space:]]*\\(:\\)[[:space:]]*\\([[:digit:]]+\\)\\)"
