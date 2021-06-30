@@ -103,7 +103,6 @@
 
 (defun wikinfo--json (url)
   "Get JSON from URL. Return a JSON object."
-  (message "API URL: %s" url)
   (with-current-buffer (url-retrieve-synchronously url)
     (kill-region (point-min)
                  (save-match-data
