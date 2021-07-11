@@ -49,7 +49,7 @@
 ;;@TODO: grab page urls in this query?
 (defcustom wikinfo-search-params '("&action=query"
                                    "&generator=search"
-                                   "&gsrsearch=%s hastemplate:\"infobox\""
+                                   "&gsrsearch=%s insource:\"Infobox\""
                                    "&gsrlimit=20"
                                    "&gsrinfo=suggestion"
                                    "&gsrnamespace=0"
