@@ -111,12 +111,11 @@
     (json-parse-string (buffer-string)
                        :object-type 'plist)))
 
-(defun wikinfo-search (&optional query filter)
+(defun wikinfo-search (query &optional filter)
   "Search wikipedia for QUERY. Return plist with page metadata.
 FILTER must be a unary function which accepts the QUERY result list.
 It must return a single result. If nil, the user is prompted."
-  (if-let* ((query (or query (read-string "Query: ")))
-            (url (concat (wikinfo--url)
+  (if-let* ((url (concat (wikinfo--url)
                          (wikinfo--url-params wikinfo-search-params query)))
             (JSON (wikinfo--json url))
             (pages (cdr (wikinfo--plist-path JSON :query :pages)))
@@ -246,10 +245,10 @@ TARGETS must one of the following:
                                 (concat "https:" thumbnail)))))
     result))
 
-(defun wikinfo (&optional search filter)
+(defun wikinfo (search &optional filter)
   "Return infobox plist for SEARCH.
 FILTER and SEARCH are passed to `wikinfo-search'."
-  (let* ((query (wikinfo-search search filter))
+  (let* ((query   (wikinfo-search search filter))
          (infobox (wikinfo-infobox (plist-get query :id))))
     (plist-put infobox :wikinfo query)))
 
