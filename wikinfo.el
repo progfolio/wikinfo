@@ -145,7 +145,7 @@ It must return a single result. If nil, the user is prompted."
          (alist-get (completing-read "wikinfo: "
                                      (mapcar #'car sorted)
                                      nil t)
-                    sorted nil nil #'string=)
+                    sorted nil nil #'equal)
          (user-error "No candidate selected")))
     ;;@TODO: Fix this. Needs to be more robust.
     (user-error "Query %S failed" query)))
