@@ -34,7 +34,7 @@
 
 ;;; Custom Options
 (defgroup wikinfo nil
-  "Wikipedia infobox to Elisp bridge"
+  "Wikipedia infobox to Elisp bridge."
   :group 'development
   :prefix "wikinfo-")
 
