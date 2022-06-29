@@ -101,15 +101,12 @@
   "RETURN base URL for QUERY."
   (concat wikinfo-base-url wikinfo-api-endpoint))
 
+(defvar url-http-end-of-headers)
 (defun wikinfo--json (url)
   "Get JSON from URL. Return a JSON object."
   (with-current-buffer (url-retrieve-synchronously url)
-    (kill-region (point-min)
-                 (save-match-data
-                   (re-search-forward "^\n" nil t)
-                   (point)))
-    (json-parse-string (buffer-string)
-                       :object-type 'plist)))
+    (goto-char url-http-end-of-headers)
+    (json-parse-string (buffer-substring (point) (point-max)) :object-type 'plist)))
 
 (defun wikinfo-search (query &optional filter)
   "Search wikipedia for QUERY. Return plist with page metadata.
