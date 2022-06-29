@@ -149,7 +149,7 @@ It must return a single result. If nil, the user is prompted."
 (defun wikinfo--santize-header-text (string)
   "Return santizied th STRING."
   (thread-last
-      (downcase string)
+    (downcase string)
     (replace-regexp-in-string "\\(?:[[:space:]]\\| \\)" "-")
     (replace-regexp-in-string "[^[:alnum:]-]" "")
     (replace-regexp-in-string "--" "-")
@@ -159,7 +159,7 @@ It must return a single result. If nil, the user is prompted."
 (defun wikinfo--sanitize-data (string)
   "Return sanitized STRING."
   (thread-last
-      string
+    string
     ;;embedded newline characters
     (replace-regexp-in-string "\\(?:[[:space:]]+\n[[:space:]]+\\)" ",")
     (replace-regexp-in-string "\\(?:\n\\)" " ")
@@ -198,7 +198,7 @@ TARGETS must one of the following:
  Returns altered DOM."
   (let ((nodelist
          (thread-last
-             targets
+           targets
            (mapcar (lambda (target)
                      (let* ((classp (stringp target))
                             (nodes
