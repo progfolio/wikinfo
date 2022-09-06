@@ -201,8 +201,7 @@ TARGETS must one of the following:
            targets
            (mapcar (lambda (target)
                      (let* ((classp (stringp target))
-                            (nodes
-                             (funcall (if classp #'dom-by-class #'dom-by-tag)
+                            (nodes (funcall (if classp #'dom-by-class #'dom-by-tag)
                                       dom target)))
                        nodes)))
            (delq nil)
@@ -226,20 +225,17 @@ TARGETS must one of the following:
          (thumbnail (alist-get 'src (cadar (dom-by-tag table 'img))))
          (rows (dom-by-tag table 'tr))
          result)
-    (dolist (row rows result)
-      (when-let* ((header (dom-by-tag row 'th))
-                  (header-texts (wikinfo--santize-header-text (dom-texts header)))
-                  (data (dom-texts (dom-by-tag row 'td))))
-        (unless (or (string-empty-p header-texts)
-                    (string-empty-p data))
-          (setq result
-                (plist-put result
-                           (intern (concat ":" header-texts))
-                           (wikinfo--sanitize-data data))))))
-    (when-let ((src (alist-get 'src (cadar (dom-by-tag html 'img)))))
-      (when thumbnail
-        (setq result (plist-put result :thumbnail
-                                (concat "https:" thumbnail)))))
+    (dolist (row rows)
+      (when-let ((header (dom-by-tag row 'th))
+                 (header-texts (wikinfo--santize-header-text (dom-texts header)))
+                 (data (dom-texts (dom-by-tag row 'td)))
+                 ((not (or (string-empty-p header-texts) (string-empty-p data)))))
+        (setq result (plist-put result
+                                (intern (concat ":" header-texts))
+                                (wikinfo--sanitize-data data)))))
+    (when-let ((src (alist-get 'src (cadar (dom-by-tag html 'img))))
+               (thumbnail))
+      (setq result (plist-put result :thumbnail (concat "https:" thumbnail))))
     result))
 
 (defun wikinfo (search &optional filter)
