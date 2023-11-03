@@ -79,7 +79,7 @@
                                      "plainlinks"
                                      "NavHead")
   "List of targets for `wikinfo--remove-targets'."
-  :type 'list)
+  :type '(repeat (choice symbol string)))
 
 (defface wikinfo-search-title '((t (:weight bold :height 1.05)))
   "Face for search result extracts.")
