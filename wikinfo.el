@@ -1,6 +1,6 @@
 ;;; wikinfo.el --- Scrape Wikipedia Infoboxes -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020-2022 Nicholas Vollmer
+;; Copyright (C) 2020-2024 Nicholas Vollmer
 
 ;; Author: Nicholas Vollmer <progfolio@protonmail.com>
 ;; URL: https://github.com/progfolio/wikinfo
